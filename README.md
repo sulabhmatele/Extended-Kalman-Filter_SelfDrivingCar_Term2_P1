@@ -30,10 +30,11 @@ INPUT: values provided by the simulator to the c++ program
 ## Basic Build Instructions
 
 1. Clone this repo.
-2. Make a build directory: `mkdir build && cd build`
-3. Compile: `cmake .. && make` 
+2. Remove existing build dir
+3. Make a new build directory: `mkdir build && cd build`
+4. Compile: `cmake .. && make` 
    * On windows, you may need to run: `cmake .. -G "Unix Makefiles" && make`
-4. Run it: `./ExtendedKF path/to/input.txt path/to/output.txt`. You can find
+5. Run it: `./ExtendedKF path/to/input.txt path/to/output.txt`. You can find
    some sample inputs in 'data/'.
     - eg. `./ExtendedKF ../data/obj_pose-laser-radar-synthetic-input.txt`
 
