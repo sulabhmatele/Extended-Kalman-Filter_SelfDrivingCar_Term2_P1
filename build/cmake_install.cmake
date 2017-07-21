@@ -1,4 +1,4 @@
-# Install script for directory: /Users/sulabhmatele/My Cloud/Study/SelfDrivingCars/T2_Code/P1_EKF/CarND-Extended-Kalman-Filter-Project-project_v2
+# Install script for directory: /Users/sulabhmatele/My Cloud/Study/SelfDrivingCars/T2_Code/P1_EKF/git/SelfDrivingCar_Term2_P1
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -35,5 +35,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/sulabhmatele/My Cloud/Study/SelfDrivingCars/T2_Code/P1_EKF/CarND-Extended-Kalman-Filter-Project-project_v2/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/sulabhmatele/My Cloud/Study/SelfDrivingCars/T2_Code/P1_EKF/git/SelfDrivingCar_Term2_P1/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
