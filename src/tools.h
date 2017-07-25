@@ -29,6 +29,11 @@ public:
     */
     MatrixXd CalculateJacobian(const VectorXd& x_state);
 
+    /**
+    * A helper method to calculate h_x for Radar.
+    */
+    MatrixXd CalculateHx(const VectorXd& x_state);
+
 };
 
 #endif /* TOOLS_H_ */
