@@ -32,7 +32,7 @@ public:
     /**
     * A helper method to calculate h_x for Radar.
     */
-    MatrixXd CalculateHx(const VectorXd& x_state);
+    VectorXd CalculateHx(const VectorXd& x_state);
 
 };
 

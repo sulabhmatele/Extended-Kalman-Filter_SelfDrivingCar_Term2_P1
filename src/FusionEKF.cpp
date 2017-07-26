@@ -51,6 +51,21 @@ FusionEKF::FusionEKF() {
              0, 1, 0, 1,
              0, 0, 1, 0,
              0, 0, 0, 1;
+
+  ekf_.Q_ = MatrixXd(4, 4);
+  ekf_.Q_ << 0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 0;
+
+    ekf_.R_ = MatrixXd(3, 3);
+    ekf_.R_ << 0,0,0,
+            0,0,0,
+            0,0,0;
+
+    ekf_.H_ = MatrixXd(2, 4);
+    ekf_.H_ << 0,0,0,0,
+              0,0,0,0;
 }
 
 /**
@@ -86,15 +101,15 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
 
       ekf_.x_ << ro * cos(theta), ro * sin(theta), 0, 0;
 
-      ekf_.Init(ekf_.x_, ekf_.P_, ekf_.F_,
-                Hj_, R_radar_, ekf_.Q_);
+/*      ekf_.Init(ekf_.x_, ekf_.P_, ekf_.F_,
+                Hj_, R_radar_, ekf_.Q_);*/
       previous_timestamp_ = measurement_pack.timestamp_;
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER)
     {
       ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0 ;
-      ekf_.Init(ekf_.x_, ekf_.P_, ekf_.F_,
-                  H_laser_, R_laser_, ekf_.Q_);
+/*      ekf_.Init(ekf_.x_, ekf_.P_, ekf_.F_,
+                  H_laser_, R_laser_, ekf_.Q_);*/
       previous_timestamp_ = measurement_pack.timestamp_;
     }
 
@@ -152,11 +167,18 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR)
   {
     // Radar updates
+
+    ekf_.R_ = MatrixXd(3, 3);
+    ekf_.R_ = R_radar_;
     ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   }
   else
   {
     // Laser updates
+    ekf_.R_ = MatrixXd(2, 2);
+    ekf_.R_ = R_laser_;
+    ekf_.H_ = MatrixXd(2, 4);
+    ekf_.H_ = H_laser_;
     ekf_.Update(measurement_pack.raw_measurements_);
   }
 

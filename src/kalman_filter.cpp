@@ -25,8 +25,8 @@ void KalmanFilter::Predict()
   * predict the state
   */
 
-  x_ = F_ * x_ + Q_; // Considering external motion u as 0
-  P_ = F_ * P_ * F_.transpose();
+  x_ = F_ * x_ ; // Considering external motion u as 0
+  P_ = F_ * P_ * F_.transpose() + Q_;
 }
 
 void KalmanFilter::Update(const VectorXd &z)
@@ -49,8 +49,11 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
   /**
   * update the state by using Extended Kalman Filter equations
   */
-    MatrixXd h_x = tools.CalculateHx(x_);
-    MatrixXd Hj = tools.CalculateJacobian(x_);
+    VectorXd h_x = VectorXd(3);
+    h_x = tools.CalculateHx(x_);
+
+    MatrixXd Hj = MatrixXd(3,4);
+    Hj = tools.CalculateJacobian(x_);
 
     MatrixXd y = z - h_x;
 

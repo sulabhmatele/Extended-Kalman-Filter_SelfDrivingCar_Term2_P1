@@ -44,7 +44,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
     {
-        MatrixXd Hj(3,4);
+        MatrixXd Hj = MatrixXd(3,4);
         //recover state parameters
         const double & px = x_state(0);
         const double & py = x_state(1);
@@ -73,9 +73,9 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
         return Hj;
     }
 
-MatrixXd Tools::CalculateHx(const VectorXd& x_state)
+VectorXd Tools::CalculateHx(const VectorXd& x_state)
 {
-    MatrixXd h_x(3,1);
+    VectorXd h_x = VectorXd(3);
 
     const double & px = x_state(0);
     const double & py = x_state(1);
@@ -83,11 +83,10 @@ MatrixXd Tools::CalculateHx(const VectorXd& x_state)
     const double & vy = x_state(3);
 
     double eq_1 = sqrt(px * px + py * py);
-    double eq_2 = atan(py/px);
+    double eq_2 = atan2(py,px);
     double eq_3 = vx*px + vy*py;
 
-    h_x(0,0) = eq_1;
-    h_x(1,0) = eq_2;
-    h_x(2,0) = eq_3/eq_1;
+    h_x << eq_1, eq_2, eq_1 != 0 ? eq_3/eq_1 : 0;
+    return h_x;
 }
 
