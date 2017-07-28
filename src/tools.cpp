@@ -82,11 +82,11 @@ VectorXd Tools::CalculateHx(const VectorXd& x_state)
     const double & vx = x_state(2);
     const double & vy = x_state(3);
 
-    double eq_1 = sqrt(px * px + py * py);
-    double eq_2 = atan2(py,px);
-    double eq_3 = vx*px + vy*py;
+    double roh = sqrt(px * px + py * py);
+    double phi = atan2(py,px);
+    double rohdot = vx*px + vy*py;
 
-    h_x << eq_1, eq_2, eq_1 != 0 ? eq_3/eq_1 : 0;
+    h_x << roh, phi, fabs(roh) < 0.0001 ? 0.001 : rohdot/roh;
     return h_x;
 }
 

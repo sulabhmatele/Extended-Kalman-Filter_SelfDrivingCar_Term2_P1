@@ -35,12 +35,14 @@ void KalmanFilter::Update(const VectorXd &z)
   * update the state by using Kalman Filter equations
   */
 
-  MatrixXd y = z - H_ * x_;
+  VectorXd y = z - (H_ * x_);
   MatrixXd S = H_ * P_ * H_.transpose() + R_;
   MatrixXd K = P_ * H_.transpose() * S.inverse();
-  MatrixXd I = MatrixXd::Identity(2, 2); // Identity matrix
 
-  x_ = x_ + (K * y);
+    x_ = x_ + (K * y);
+
+    MatrixXd I = MatrixXd::Identity(x_.size(), x_.size()); // Identity matrix
+
   P_ = (I - K * H_) * P_;
 }
 
@@ -55,12 +57,16 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
     MatrixXd Hj = MatrixXd(3,4);
     Hj = tools.CalculateJacobian(x_);
 
-    MatrixXd y = z - h_x;
+    VectorXd y = z - h_x;
+
+    y[1] = atan2(sin(y[1]), cos(y[1]));
 
     MatrixXd S = Hj * P_ * Hj.transpose() + R_;
     MatrixXd K = P_ * Hj.transpose() * S.inverse();
-    MatrixXd I = MatrixXd::Identity(2, 2); // Identity matrix
 
     x_ = x_ + (K * y);
+
+    MatrixXd I = MatrixXd::Identity(x_.size(), x_.size()); // Identity matrix
+
     P_ = (I - K * Hj) * P_;
 }

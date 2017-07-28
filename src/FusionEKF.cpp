@@ -66,6 +66,10 @@ FusionEKF::FusionEKF() {
     ekf_.H_ = MatrixXd(2, 4);
     ekf_.H_ << 0,0,0,0,
               0,0,0,0;
+    ekf_.x_ = VectorXd(4);
+
+     noise_ax = 9;
+     noise_ay = 9;
 }
 
 /**
@@ -129,9 +133,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
      * Using noise_ax = 9 and noise_ay = 9 for Q matrix, as suggested by Udacity
    */
 
-  float noise_ax = 9;
-  float noise_ay = 9;
-
   //the time elapsed between the current and previous measurements
   //dt - expressed in seconds
   double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
@@ -175,9 +176,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
   else
   {
     // Laser updates
-    ekf_.R_ = MatrixXd(2, 2);
+  //  ekf_.R_ = MatrixXd(2, 2);
     ekf_.R_ = R_laser_;
-    ekf_.H_ = MatrixXd(2, 4);
+  //  ekf_.H_ = MatrixXd(2, 4);
     ekf_.H_ = H_laser_;
     ekf_.Update(measurement_pack.raw_measurements_);
   }
