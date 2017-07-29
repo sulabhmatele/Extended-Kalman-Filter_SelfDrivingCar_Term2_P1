@@ -1,18 +1,21 @@
 # Extended Kalman Filter Project
 Self-Driving Car Engineer Nanodegree Program
 
+This project simulates the Kalman filter implementation using 2 sensor data : Lidar and Radar.
+The basic algorithm works as per following principle :
+
+![Image](https://github.com/sulabhmatele/SelfDrivingCar_Term2_P1/blob/master/SensorFusion.png)
+
+To run this project: 
+
 1. mkdir build
 2. cd build
 3. cmake ..
 4. make
 5. ./ExtendedKF
 
-
 INPUT: values provided by the simulator to the c++ program
-
 ["sensor_measurement"] => the measurement that the simulator observed (either lidar or radar)
-
-
 
 ## Other Important Dependencies
 
@@ -38,8 +41,6 @@ INPUT: values provided by the simulator to the c++ program
    some sample inputs in 'data/'.
     - eg. `./ExtendedKF ../data/obj_pose-laser-radar-synthetic-input.txt`
 
-## Code Style
- [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
 
 
 
