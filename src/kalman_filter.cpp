@@ -63,11 +63,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
     float phi = atan2(py,px);
     float val = vx*px + vy*py;
 
+    /* If denominator (roh) is almost 0, then consider roh_dot as 0 */
     h_x << roh, phi, fabs(roh) < 0.0001 ? 0 : val/roh;
 
     VectorXd y = z - h_x;
 
-    /*Angle re-normalization */
+    /* Angle re-normalization */
     y[1] = atan2(sin(y[1]), cos(y[1]));
 
     MatrixXd S = H_ * P_ * H_.transpose() + R_;
