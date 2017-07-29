@@ -19,17 +19,23 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
         //  * the estimation vector size should not be zero
         //  * the estimation vector size should equal ground truth vector size
 
-        if((!estimations.empty()) && (estimations.size() == ground_truth.size()))
+        if(estimations.size() != ground_truth.size()
+           || estimations.size() == 0)
         {
-            VectorXd residual;
+            cout << "Invalid estimation or ground_truth data" << endl;
+            return rmse;
+        }
 
-            //accumulate squared residuals
-            for (int i = 0; i < estimations.size(); ++i)
-            {
-                residual = (estimations[i] - ground_truth[i]);
-                residual = residual.array() * residual.array();
-                rmse += residual;
-            }
+        //accumulate squared residuals
+        for(unsigned int i=0; i < estimations.size(); ++i)
+        {
+
+            VectorXd residual = estimations[i] - ground_truth[i];
+
+            //coefficient-wise multiplication
+            residual = residual.array()*residual.array();
+            rmse += residual;
+        }
 
             rmse = rmse/ estimations.size();
 
@@ -37,56 +43,34 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
             //return the result
             return rmse;
-        }
-        return rmse;
     }
 
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state)
     {
         MatrixXd Hj = MatrixXd(3,4);
+
+        Hj << 0,0,0,0,
+              0,0,0,0,
+              0,0,0,0;
+
         //recover state parameters
-        const double & px = x_state(0);
-        const double & py = x_state(1);
-        const double & vx = x_state(2);
-        const double & vy = x_state(3);
+        float px = x_state(0);
+        float py = x_state(1);
+        float vx = x_state(2);
+        float vy = x_state(3);
 
-        double deno = px * px + py * py;
-        double fact_1 = vx*py - vy*px;
-        double fact_2 = vy*px - vx*py;
+        float deno = px * px + py * py;
+        float fact_0 = sqrt(deno);
+        float fact_1 = vx*py - vy*px;
+        float fact_2 = vy*px - vx*py;
 
-        Hj(0,0) = (sqrt(deno) != 0) ? px/sqrt(deno): 0;
-        Hj(0,1) = (sqrt(deno) != 0) ? py/sqrt(deno): 0;
-        Hj(0,2) = 0;
-        Hj(0,3) = 0;
-
-        Hj(1,0) = (deno != 0) ? -py/deno: 0;
-        Hj(1,1) = (deno != 0) ? px/deno: 0;
-        Hj(1,2) = 0;
-        Hj(1,3) = 0;
-
-        Hj(2,0) = (pow(deno, 3/2)) != 0.0 ? py *(fact_1) /pow(deno, 3/2) : 0;
-        Hj(2,1) = (pow(deno, 3/2)) != 0.0 ? px *(fact_2) /pow(deno, 3/2) : 0;
-        Hj(2,2) = (sqrt(deno) != 0) ? px/sqrt(deno): 0;
-        Hj(2,3) = (sqrt(deno) != 0) ? py/sqrt(deno): 0;
-
+        if(fabs(deno) > 0.0001)
+        {
+            Hj << px / fact_0, py / fact_0, 0, 0,
+                  -py / deno, px / deno, 0, 0,
+                  py * (fact_1) / pow(deno, 1.5), px * (fact_2) / pow(deno, 1.5), px / fact_0, py / fact_0;
+        }
         return Hj;
     }
-
-VectorXd Tools::CalculateHx(const VectorXd& x_state)
-{
-    VectorXd h_x = VectorXd(3);
-
-    const double & px = x_state(0);
-    const double & py = x_state(1);
-    const double & vx = x_state(2);
-    const double & vy = x_state(3);
-
-    double roh = sqrt(px * px + py * py);
-    double phi = atan2(py,px);
-    double rohdot = vx*px + vy*py;
-
-    h_x << roh, phi, fabs(roh) < 0.0001 ? 0.001 : rohdot/roh;
-    return h_x;
-}
 

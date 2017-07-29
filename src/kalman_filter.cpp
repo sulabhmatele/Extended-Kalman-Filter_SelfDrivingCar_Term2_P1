@@ -25,7 +25,7 @@ void KalmanFilter::Predict()
   * predict the state
   */
 
-  x_ = F_ * x_ ; // Considering external motion u as 0
+  x_ = F_ * x_ ;
   P_ = F_ * P_ * F_.transpose() + Q_;
 }
 
@@ -39,9 +39,10 @@ void KalmanFilter::Update(const VectorXd &z)
   MatrixXd S = H_ * P_ * H_.transpose() + R_;
   MatrixXd K = P_ * H_.transpose() * S.inverse();
 
-    x_ = x_ + (K * y);
+  x_ = x_ + (K * y);
 
-    MatrixXd I = MatrixXd::Identity(x_.size(), x_.size()); // Identity matrix
+  long x_size = x_.size();
+  MatrixXd I = MatrixXd::Identity(x_size, x_size);
 
   P_ = (I - K * H_) * P_;
 }
@@ -51,22 +52,31 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
   /**
   * update the state by using Extended Kalman Filter equations
   */
-    VectorXd h_x = VectorXd(3);
-    h_x = tools.CalculateHx(x_);
+    VectorXd h_x(3);
 
-    MatrixXd Hj = MatrixXd(3,4);
-    Hj = tools.CalculateJacobian(x_);
+    float px = x_(0);
+    float py = x_(1);
+    float vx = x_(2);
+    float vy = x_(3);
+
+    float roh = sqrt(px * px + py * py);
+    float phi = atan2(py,px);
+    float val = vx*px + vy*py;
+
+    h_x << roh, phi, fabs(roh) < 0.0001 ? 0 : val/roh;
 
     VectorXd y = z - h_x;
 
+    /*Angle re-normalization */
     y[1] = atan2(sin(y[1]), cos(y[1]));
 
-    MatrixXd S = Hj * P_ * Hj.transpose() + R_;
-    MatrixXd K = P_ * Hj.transpose() * S.inverse();
+    MatrixXd S = H_ * P_ * H_.transpose() + R_;
+    MatrixXd K = P_ * H_.transpose() * S.inverse();
 
     x_ = x_ + (K * y);
 
-    MatrixXd I = MatrixXd::Identity(x_.size(), x_.size()); // Identity matrix
+    long x_size = x_.size();
+    MatrixXd I = MatrixXd::Identity(x_size, x_size);
 
-    P_ = (I - K * Hj) * P_;
+    P_ = (I - K * H_) * P_;
 }
